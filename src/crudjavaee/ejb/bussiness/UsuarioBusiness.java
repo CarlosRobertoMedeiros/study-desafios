@@ -40,23 +40,19 @@ public class UsuarioBusiness {
 		return usuarioDAO.listarUsuario(id);
 	}
 
-	public Usuario addUsuario(Usuario usuario) {
-		usuario.setId(usuarioIdMap.size() + 1L);
-		usuarioIdMap.put(usuario.getId().intValue(), usuario);
-		return usuario;
+	public UsuarioDTO addUsuario(Usuario usuario) {
+		UsuarioDTO novoUsuario = usuarioDAO.adicionarUsuario(usuario);
+		return novoUsuario;
 	}
 
-	public Usuario atualizarUsuario(Usuario usuario) {
-		if (usuario.getId() <= 0)
-			return null;
-
-		usuarioIdMap.put(usuario.getId().intValue(), usuario);
-		return usuario;
-
+	public UsuarioDTO atualizarUsuario(int id, Usuario usuario) {
+		UsuarioDTO usuarioAtualizado = usuarioDAO.atualizarUsuario(id, usuario);
+		return usuarioAtualizado;
 	}
 
-	public void excluirUsuario(int id) {
-		usuarioIdMap.remove(id);
+	public boolean excluirUsuario(int id) {
+		return usuarioDAO.excluirUsuario(id);
+		
 	}
 
 	private static HashMap<Integer, Usuario> getUsuarioIdMap() {

@@ -32,10 +32,47 @@ public class UsuarioDAO {
 
 	public UsuarioDTO listarUsuario(int id) {
 		Long idInterno = new Long(id);
-		Usuario usuario = manager.createQuery("select u from Usuario u where u.id=:idInterno", Usuario.class)
+		
+		try {
+			Usuario usuario = manager.createQuery("select u from Usuario u where u.id=:idInterno", Usuario.class)
 				.setParameter("idInterno", idInterno)
 				.getSingleResult();
-	
-		return new UsuarioDTO(usuario.getId(), usuario.getNome(), usuario.getUsuario());
+
+			return new UsuarioDTO(usuario.getId(), usuario.getNome(), usuario.getUsuario());
+		}catch (RuntimeException e) {
+			UsuarioDTO usuarioDto = null;
+			return usuarioDto;
+		}
+	}
+
+	public UsuarioDTO adicionarUsuario(Usuario usuario) {
+		Usuario novoUsuario = manager.merge(usuario);
+		return new UsuarioDTO(novoUsuario.getId(), novoUsuario.getNome(), novoUsuario.getUsuario());
+	}
+
+	public UsuarioDTO atualizarUsuario(int id, Usuario usuario) {
+		Long idInterno = new Long(id);
+		Usuario usuarioExistente = manager.find(Usuario.class, idInterno);
+		
+		if (usuarioExistente==null) {
+			UsuarioDTO usuarioDTO = null;
+			return usuarioDTO;
+		} 
+		
+		usuarioExistente.setNome(usuario.getNome());
+		usuarioExistente.setUsuario(usuario.getUsuario());
+		usuarioExistente.setSenha(usuario.getSenha());
+		usuarioExistente = manager.merge(usuarioExistente);
+		return new UsuarioDTO(usuarioExistente.getId(), usuarioExistente.getNome(), usuarioExistente.getUsuario());
+	}
+
+	public boolean excluirUsuario(int id) {
+		Long idInterno = new Long(id);
+		Usuario usuarioExistente = manager.find(Usuario.class, idInterno);
+		if (usuarioExistente==null) {
+			return false;
+		}
+		manager.remove(usuarioExistente);
+		return true;
 	}
 }

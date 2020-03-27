@@ -54,7 +54,6 @@ public class UsuarioResource {
 	public Response getUsuario(@PathParam("id") int id) {
 		UsuarioDTO usuario = usuarioBusiness.getUsuario(id);
 		if(usuario==null) {
-			//throw new UsuarioNotFoundException("Usuário com idmjh " + id + " não encontrado !");
 			return Response
 					.noContent()
 					.build();
@@ -64,15 +63,13 @@ public class UsuarioResource {
 				.build();
 	}
 
-	//@MatrixParam
-	//@HeaderParam
-	//@CookieParam
 	@POST
 	public Response adicionarUsuario(Usuario usuario, @Context UriInfo uriInfo) throws URISyntaxException {
 
-		Usuario novoUsuario = usuarioBusiness.addUsuario(usuario);
+		UsuarioDTO novoUsuario = usuarioBusiness.addUsuario(usuario);
 		String newId = String.valueOf(novoUsuario.getId());
 		URI uri = uriInfo.getAbsolutePathBuilder().path(newId).build();
+		
 		return Response.created(uri)
 				 .status(Status.CREATED)
 				 .entity(novoUsuario)
@@ -81,16 +78,35 @@ public class UsuarioResource {
 	
 	@PUT
 	@Path("/{id}")
-	public Usuario atualizarUsuario(@PathParam("id") long id,  Usuario usuario) {
-		usuario.setId(id);
-		return usuarioBusiness.atualizarUsuario(usuario);
+	public Response atualizarUsuario(@PathParam("id") int id,  Usuario usuario, @Context UriInfo uriInfo) throws URISyntaxException {
+		
+		UsuarioDTO meuUsuario = usuarioBusiness.atualizarUsuario(id, usuario);
+		URI uri = uriInfo.getAbsolutePathBuilder().path(meuUsuario.getId().toString()).build();
+		
+		if (meuUsuario==null) {
+			return Response
+					.status(Status.NOT_FOUND)
+					.build();
+		}
+		return Response.created(uri)
+				 .status(Status.OK)
+				 .entity(meuUsuario)
+				 .build();
 	}
 	
 	@DELETE
 	@Path("/{id}")
-	public void excluirUsuario(@PathParam("id") int id) {
-		usuarioBusiness.excluirUsuario(id);
+	public Response excluirUsuario(@PathParam("id") int id) {
+		boolean excluiu = usuarioBusiness.excluirUsuario(id);
+		if (excluiu) {
+			return Response
+					 .status(Status.OK)
+					 .build();
+		}
+		else {
+			return Response
+					.status(Status.NOT_FOUND)
+					.build();
+		}
 	}
-	
-
 }
