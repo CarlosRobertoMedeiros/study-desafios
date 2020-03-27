@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -19,32 +20,48 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import crudjavaee.exception.DataNotFoundException;
+import crudjavaee.dto.UsuarioDTO;
+import crudjavaee.ejb.bussiness.UsuarioBusiness;
+import crudjavaee.exception.UsuarioNotFoundException;
 import crudjavaee.model.Usuario;
 import crudjavaee.resource.bean.UsuarioFilterBean;
-import crudjavaee.service.UsuarioServico;
 
 @Path("/usuarios")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class UsuarioResource {
 
-	private UsuarioServico usuarioServico = new UsuarioServico();
+	@Inject
+	private UsuarioBusiness usuarioBusiness;
 
 
 	@GET
-	public List<Usuario> getUsuarios(@BeanParam UsuarioFilterBean filterBean) {
-		return usuarioServico.getAllUsuariosPaginados(filterBean.getInicio(), filterBean.getTamanho());
+	public Response getUsuarios(@BeanParam UsuarioFilterBean filterBean)  {
+		List<UsuarioDTO> usuarios = usuarioBusiness.getAllUsuarios(filterBean.getInicio(), filterBean.getTamanho());
+		
+		if (usuarios.isEmpty()) {
+			return Response
+				.noContent()
+				.build();
+		}
+		return Response
+				.ok(usuarios)
+				.build();
 	}
 
 	@GET
 	@Path("/{id}")
-	public Usuario getUsuario(@PathParam("id") int id) {
-		Usuario usuario = usuarioServico.getUsuario(id);
+	public Response getUsuario(@PathParam("id") int id) {
+		UsuarioDTO usuario = usuarioBusiness.getUsuario(id);
 		if(usuario==null) {
-			throw new DataNotFoundException("Mensagem com id " + id + " não encontrada !");
+			//throw new UsuarioNotFoundException("Usuário com idmjh " + id + " não encontrado !");
+			return Response
+					.noContent()
+					.build();
 		}
-		return usuario;
+		return Response
+				.ok(usuario)
+				.build();
 	}
 
 	//@MatrixParam
@@ -53,7 +70,7 @@ public class UsuarioResource {
 	@POST
 	public Response adicionarUsuario(Usuario usuario, @Context UriInfo uriInfo) throws URISyntaxException {
 
-		Usuario novoUsuario = usuarioServico.addUsuario(usuario);
+		Usuario novoUsuario = usuarioBusiness.addUsuario(usuario);
 		String newId = String.valueOf(novoUsuario.getId());
 		URI uri = uriInfo.getAbsolutePathBuilder().path(newId).build();
 		return Response.created(uri)
@@ -66,13 +83,13 @@ public class UsuarioResource {
 	@Path("/{id}")
 	public Usuario atualizarUsuario(@PathParam("id") long id,  Usuario usuario) {
 		usuario.setId(id);
-		return usuarioServico.atualizarUsuario(usuario);
+		return usuarioBusiness.atualizarUsuario(usuario);
 	}
 	
 	@DELETE
 	@Path("/{id}")
 	public void excluirUsuario(@PathParam("id") int id) {
-		usuarioServico.excluirUsuario(id);
+		usuarioBusiness.excluirUsuario(id);
 	}
 	
 

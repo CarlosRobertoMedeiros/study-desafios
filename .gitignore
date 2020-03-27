@@ -31,4 +31,4 @@ build/
 .vscode/
 /.metadata/
 
-/statelessexample-docker/dados/database_data
+/crudjavaee-docker/dados/database_data

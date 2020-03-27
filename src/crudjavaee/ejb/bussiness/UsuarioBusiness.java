@@ -1,23 +1,30 @@
-package crudjavaee.service;
+package crudjavaee.ejb.bussiness;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import crudjavaee.dao.UsuarioDAO;
+import crudjavaee.dto.UsuarioDTO;
 import crudjavaee.model.Usuario;
 
-public class UsuarioServico {
+@Stateless
+public class UsuarioBusiness {
 
+	@Inject
+	private UsuarioDAO usuarioDAO;
 	static HashMap<Integer, Usuario> usuarioIdMap = getUsuarioIdMap();
 
-	public UsuarioServico() {
+	public UsuarioBusiness() {
 		super();
 		if (usuarioIdMap == null) {
 			usuarioIdMap = new HashMap<Integer, Usuario>();
 
-			Usuario usuario = new Usuario(1L, "Carlos Roberto", "123");
-			Usuario usuario1 = new Usuario(2L, "Luciene Alves", "456");
-			Usuario usuario2 = new Usuario(3L, "Ezequias Alves", "789");
+			Usuario usuario =  new Usuario(1L,"Carlos Roberto","123","A");
+			Usuario usuario1 = new Usuario(2L,"Luciene Alves", "456","A");
+			Usuario usuario2 = new Usuario(3L,"Ezequias Alves","789","A");
 
 			usuarioIdMap.put(1, usuario);
 			usuarioIdMap.put(2, usuario1);
@@ -25,24 +32,12 @@ public class UsuarioServico {
 		}
 	}
 
-	public List<Usuario> getAllUsuarios() {
-		List<Usuario> usuarios = new ArrayList<>(usuarioIdMap.values());
-		return usuarios;
+	public List<UsuarioDTO> getAllUsuarios(int inicio, int tamanho) {
+		return usuarioDAO.listarUsuarios(inicio, tamanho);
 	}
 	
-	public List<Usuario> getAllUsuariosPaginados(int inicio, int tamanho){
-		
-		List<Usuario> usuarios = new ArrayList<>(usuarioIdMap.values());
-		if(inicio+tamanho > usuarios.size()) {
-			return new ArrayList<Usuario>();
-		}
-		return usuarios.subList(inicio, inicio+tamanho);
-	}
-
-	
-	public Usuario getUsuario(int id) {
-		Usuario usuario = usuarioIdMap.get(id);
-		return usuario;
+	public UsuarioDTO getUsuario(int id) {
+		return usuarioDAO.listarUsuario(id);
 	}
 
 	public Usuario addUsuario(Usuario usuario) {

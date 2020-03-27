@@ -1,17 +1,31 @@
 package crudjavaee.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "tb_usuario", schema = "sistemaexemplods")
 public class Usuario {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String nome;
+	private String usuario;
 	private String senha;
+	private boolean ativo=true;
 
-	public Usuario() {}
-	
-	public Usuario(Long id, String nome, String senha) {
+	public Usuario() {
+	}
+
+	public Usuario(Long id, String nome, String usuario, String senha) {
 		super();
 		this.id = id;
 		this.nome = nome;
+		this.usuario = usuario;
 		this.senha = senha;
 	}
 
@@ -37,6 +51,22 @@ public class Usuario {
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
 	}
 
 	@Override
