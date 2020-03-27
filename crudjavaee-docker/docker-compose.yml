@@ -1,0 +1,31 @@
+version: '3.5'
+
+networks: 
+    net-backend:
+        driver: bridge
+        
+services:
+    
+    postgresdb:
+        
+        env_file:
+            - development.env
+        build: 
+            dockerfile: ./docker/postgres.dockerfile
+            context: .
+        image: carlosmedeiroslima/postgresdb
+        container_name: postgresdb
+        ports:
+            - "5432:5432"
+        networks:
+            - net-backend
+        volumes: 
+            - ./dados/init:/docker-entrypoint-initdb.d/
+            - ./dados/database_data:/var/lib/postgresql/data
+        restart: always
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_HOST_AUTH_METHOD: trust
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
