@@ -2,7 +2,7 @@
 
     Desafio 1 - Fazendo - PADRÃO JAVAEE
     Backend 
-    	- Implementação Simples de um Crud Utilizando 
+    	- Implementação de um Crud Utilizando 
     		JAX-RS Com Jersey
     		Jpa 2
     		Paginação
@@ -15,10 +15,9 @@
 
     Desafio 2 - A Fazendo - PADRÃO SPRING
     Backend 
-    	- Implementação Simples de um Crud Utilizando 
-    		JAX-RS Com Jersey
-    		Jpa 2
-    		Paginação
+    	- Implementação de um Crud Utilizando 
+    		Spring
+            Spring DataJpa
     FrontEnd
     	- Angular 9
     		Consumindo a Api 
